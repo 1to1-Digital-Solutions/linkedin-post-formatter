@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/*
+ * Los colores, como tokens: los de la marca de 1to1 (antracita y el verde #1f957a con su escala),
+ * los mismos que usa el CRM. Los componentes usan solo estos nombres (`bg-superficie`,
+ * `text-acento`…), nunca un hex suelto ni la paleta de Tailwind: cambiar un tono es cambiarlo
+ * aquí, en claro y en oscuro.
+ *
+ * Jerarquía de superficies: `hundido` < `fondo` (la página) < `superficie` (tarjetas) <
+ * `elevada` (hover, lo activo). `campo` es el fondo de los controles.
+ *
+ * `primario` es el fondo de los botones principales; `acento` es el verde para texto, un tono
+ * más claro en oscuro porque #1f957a no llega a 4,5:1 sobre antracita.
+ */
+:root {
+  color-scheme: light;
+  --fondo: #f4f4f5;
+  --hundido: #e9e9ec;
+  --superficie: #ffffff;
+  --elevada: #f0f0f2;
+  --borde: #dcdce0;
+  --borde-campo: #8a8a93;
+  --campo: #ffffff;
+  --texto: #1c1c1f;
+  --tenue: #52525b;
+  --primario: #188169;
+  --primario-hover: #116e57;
+  --sobre-primario: #ffffff;
+  --acento: #116e57;
+  --acento-suave: #d5f2ea;
+  --peligro: #b91c1c;
+  --peligro-fondo: #b91c1c;
+  --peligro-hover: #991b1b;
+  --sobre-peligro: #ffffff;
+  --aviso: #92400e;
+  --foco: #116e57;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --fondo: #27272a;
+    --hundido: #1e1e21;
+    --superficie: #313135;
+    --elevada: #3b3b40;
+    --borde: #44444a;
+    --borde-campo: #7a7a83;
+    --campo: #1e1e21;
+    --texto: #ededed;
+    --tenue: #b0b0b8;
+    --primario: #1f957a;
+    --primario-hover: #1ac89a;
+    --sobre-primario: #1c1c1f;
+    --acento: #1ac89a;
+    --acento-suave: #1d3b35;
+    --peligro: #fa8a8a;
+    --peligro-fondo: #b91c1c;
+    --peligro-hover: #dc2626;
+    --sobre-peligro: #ffffff;
+    --aviso: #fbbf24;
+    --foco: #14ffbc;
+  }
+}
+
+@theme inline {
+  --color-fondo: var(--fondo);
+  --color-hundido: var(--hundido);
+  --color-superficie: var(--superficie);
+  --color-elevada: var(--elevada);
+  --color-borde: var(--borde);
+  --color-borde-campo: var(--borde-campo);
+  --color-campo: var(--campo);
+  --color-texto: var(--texto);
+  --color-tenue: var(--tenue);
+  --color-primario: var(--primario);
+  --color-primario-hover: var(--primario-hover);
+  --color-sobre-primario: var(--sobre-primario);
+  --color-acento: var(--acento);
+  --color-acento-suave: var(--acento-suave);
+  --color-peligro: var(--peligro);
+  --color-peligro-fondo: var(--peligro-fondo);
+  --color-peligro-hover: var(--peligro-hover);
+  --color-sobre-peligro: var(--sobre-peligro);
+  --color-aviso: var(--aviso);
+  --color-foco: var(--foco);
+}
+
+html,
+body {
+  background-color: var(--fondo);
+  color: var(--texto);
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* El foco siempre se ve, con el teclado, en claro y en oscuro. */
+:focus-visible {
+  outline: 2px solid var(--foco);
+  outline-offset: 2px;
+}
+
+::selection {
+  background-color: var(--primario);
+  color: var(--sobre-primario);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
