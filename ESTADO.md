@@ -30,8 +30,10 @@ copiar, recargar).
 
 ## 🚧 Lo que bloquea o espera al usuario
 
-- **Despliegue automático**: pendiente de comprobar si Vercel puede conectarse al repo de GitHub
-  (en `crm` la app de Vercel no tenía acceso). Mientras, se publica desde la CLI:
+- **Despliegue automático**: Vercel no pudo conectar el repo (la app de Vercel en GitHub no
+  tiene acceso a `formato-linkedin`, igual que pasa con `crm`). Se arregla dándole acceso en
+  GitHub (Settings de la organización → GitHub Apps → Vercel → Repository access) y repitiendo
+  `npx vercel git connect --scope 1to1-digital-solutions`. Mientras, se publica desde la CLI:
   `npx vercel deploy --prod --yes --scope 1to1-digital-solutions`.
 
 ## ▶️ Cómo arrancar
