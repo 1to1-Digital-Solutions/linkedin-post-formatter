@@ -1,0 +1,21 @@
+# Dependencias
+node_modules/
+
+# Next.js
+.next/
+next-env.d.ts
+*.tsbuildinfo
+
+# Cobertura
+coverage/
+
+# Entorno: nada de secretos en git
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel/
+
+# Sistema
+.DS_Store
