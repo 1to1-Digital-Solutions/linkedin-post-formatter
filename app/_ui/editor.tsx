@@ -10,6 +10,7 @@ import { markdownAUnicode } from "@/lib/formato/markdown";
 import { guardarBorrador, useBorrador } from "./borrador";
 import { escribir } from "./escribir";
 import { boton, botonDeFormato, botonPrimario, casilla, tenue } from "./estilos";
+import { VistaPrevia } from "./vista-previa";
 
 /** Cada botón enseña su estilo con CSS; el nombre es lo que lee un lector de pantalla. */
 const BOTONES: { estilo: Estilo; nombre: string; clase: string; atajo?: string; teclas?: string }[] = [
@@ -201,6 +202,8 @@ export function Editor() {
       <p role="status" className="min-h-5 text-sm">
         {mensaje}
       </p>
+
+      <VistaPrevia texto={texto} />
 
       <fieldset className="rounded-lg border border-borde bg-superficie px-4 py-3">
         <legend className="px-1 text-sm font-semibold">Opciones</legend>
