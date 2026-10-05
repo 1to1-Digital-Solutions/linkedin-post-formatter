@@ -3,13 +3,13 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 /**
- * **Qué se mide y con qué suelo.** La lógica vive en `lib/` y es lo que se mide, al 100 %.
- * Queda fuera `app/`: la página y el editor son el envoltorio que conecta `lib/` con el
- * `<textarea>`, el portapapeles y `localStorage`, que sin un navegador no hay cómo ejecutar. Se
- * comprueba a mano con `pnpm dev`.
+ * **What is measured and the floor.** The logic lives in `lib/` and is what is measured, at
+ * 100 %. `app/` stays out: the page and the editor are the wrapper that connects `lib/` to the
+ * `<textarea>`, the clipboard and `localStorage`, which cannot run without a browser. It is
+ * checked by hand with `pnpm dev`.
  *
- * Un umbral por debajo de lo medido no impide nada: si algún día hay que bajarlo, que sea con
- * el porqué escrito aquí.
+ * A threshold below what is measured prevents nothing: if it ever has to go down, let it be
+ * with the reason written here.
  */
 export default defineConfig({
   resolve: {

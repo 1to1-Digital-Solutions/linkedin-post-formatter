@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-import { cabecerasDeSeguridad } from "./lib/cabeceras";
+import { securityHeaders } from "./lib/headers";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/:path*",
-        headers: cabecerasDeSeguridad({ produccion: process.env.NODE_ENV === "production" }),
+        headers: securityHeaders({ production: process.env.NODE_ENV === "production" }),
       },
     ];
   },
