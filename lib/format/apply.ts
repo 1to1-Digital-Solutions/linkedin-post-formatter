@@ -5,7 +5,7 @@
  * With nothing selected, the word under the caret is used.
  */
 
-import { accepts, clear, compose, decompose, set, type Glyph, type Options, type Style } from "./glyphs";
+import { accepts, compose, decompose, set, type Glyph, type Options, type Style } from "./glyphs";
 import { overlap, protectedRanges, type Range } from "./protected";
 
 export type Change = {
@@ -67,15 +67,6 @@ export function toggle(text: string, selection: Range, style: Style, options: Op
   const on = !chosen.every((g) => g[style]);
   for (const glyph of chosen) set(glyph, style, on);
   return recompose(glyphs, span, selection);
-}
-
-/** Returns the selection to plain text, including text that came formatted by another tool. */
-export function clearFormat(text: string, selection: Range): Change {
-  const glyphs = decompose(text);
-  const span = selectedSpan(glyphs, selection);
-  glyphs.slice(...span).forEach(clear);
-  const change = recompose(glyphs, span, selection);
-  return change.text === text ? { text, selection, changed: false } : change;
 }
 
 /** Which styles the whole selection already carries: what marks the buttons as pressed. */

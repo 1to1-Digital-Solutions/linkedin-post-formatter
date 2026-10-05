@@ -146,15 +146,3 @@ export function set(glyph: Glyph, style: Style, on: boolean): void {
   }
   if (style === "bold" || style === "italic") glyph.mono = false;
 }
-
-const MATHEMATICAL = /[\u{1D400}-\u{1D7FF}]/u;
-
-/**
- * Leaves the glyph with no style at all. Letters from alphabets not used here (serif, script,
- * fraktur…, which arrive when pasting text from other tools) go back to the ordinary letter
- * through Unicode compatibility normalization.
- */
-export function clear(glyph: Glyph): void {
-  Object.assign(glyph, PLAIN);
-  if (MATHEMATICAL.test(glyph.base)) glyph.base = glyph.base.normalize("NFKC");
-}

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { bold, boldItalic, italic, mono, STRIKE, UNDERLINE } from "@/test/alphabets";
 
-import { accepts, clear, compose, decompose, set, type Glyph, type Style } from "./glyphs";
+import { accepts, compose, decompose, set, type Glyph, type Style } from "./glyphs";
 
 const WITH_ACCENTS = { accents: true };
 const NO_ACCENTS = { accents: false };
@@ -162,28 +162,5 @@ describe("set", () => {
     expect(compose([glyph])).toBe(`${bold("a")}${STRIKE}`);
     set(glyph, "strike", false);
     expect(compose([glyph])).toBe(bold("a"));
-  });
-});
-
-describe("clear", () => {
-  it("removes every style and keeps the accent", () => {
-    const glyphs = decompose(styled("ó", ["bold", "italic", "strike", "underline"]));
-    glyphs.forEach(clear);
-    expect(compose(glyphs)).toBe("ó");
-  });
-
-  it("brings other tools' alphabets back to plain letters", () => {
-    // "Hola" in serif bold (MATHEMATICAL BOLD), which is never written here.
-    const serif = "\u{1D407}\u{1D428}\u{1D425}\u{1D41A}";
-    expect(compose(decompose(serif))).toBe(serif);
-    const glyphs = decompose(serif);
-    glyphs.forEach(clear);
-    expect(compose(glyphs)).toBe("Hola");
-  });
-
-  it("does not change what has no style", () => {
-    const glyphs = decompose("¿Qué? 👍 Ω");
-    glyphs.forEach(clear);
-    expect(compose(glyphs)).toBe("¿Qué? 👍 Ω");
   });
 });

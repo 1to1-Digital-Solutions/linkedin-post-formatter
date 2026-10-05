@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { bold, boldItalic, italic, mono, strike, underline } from "@/test/alphabets";
 
-import { activeStyles, clearFormat, stylize, toggle } from "./apply";
+import { activeStyles, stylize, toggle } from "./apply";
 
 const OPTIONS = { accents: true };
 
@@ -132,37 +132,6 @@ describe("toggle", () => {
     const text = bold("ab");
     // Each letter takes two units: 1 to 3 cuts both in half.
     expect(toggle(text, { start: 1, end: 3 }, "bold", OPTIONS).text).toBe("ab");
-  });
-});
-
-describe("clearFormat", () => {
-  it("leaves the selection as plain text, whatever mix of styles", () => {
-    const text = `${boldItalic("one")} ${strike(mono("two"))} ${underline("three")} four`;
-    const change = clearFormat(text, { start: 0, end: text.length });
-    expect(change.text).toBe("one two three four");
-    expect(change.selection).toEqual({ start: 0, end: "one two three four".length });
-    expect(change.changed).toBe(true);
-  });
-
-  it("only touches the selection", () => {
-    const text = `${bold("one")} ${bold("two")}`;
-    const change = clearFormat(text, selectionOf(text, bold("two")));
-    expect(change.text).toBe(`${bold("one")} two`);
-  });
-
-  it("also cleans hashtags and links that arrived styled", () => {
-    const text = `#${bold("claude")}`;
-    expect(clearFormat(text, { start: 0, end: text.length }).text).toBe("#claude");
-  });
-
-  it("with a bare caret cleans the word it touches", () => {
-    const text = `${bold("one")} ${bold("two")}`;
-    expect(clearFormat(text, caretAt(2)).text).toBe(`one ${bold("two")}`);
-  });
-
-  it("reports no change if it was plain text already", () => {
-    const all = { start: 0, end: 11 };
-    expect(clearFormat("hello world", all)).toEqual({ text: "hello world", selection: all, changed: false });
   });
 });
 
