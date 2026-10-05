@@ -1,9 +1,8 @@
 # Alcance y comunicación
 
-- **Haz la tarea entera, y solo la tarea.** Si por el camino ves otra cosa que arreglar, o la
-  tarea es grande y hay trabajo adyacente que no toca ahora, créala como tarea de seguimiento con
-  `create_task` (MCP de Organízate, en el mismo proyecto) en vez de ampliar el cambio: un diff que
-  hace tres cosas a la vez no se puede revisar ni revertir por partes.
+- **Haz la tarea entera, y solo la tarea.** Lo que veas por el camino y no toque ahora, a
+  `create_task` (MCP de Organízate, mismo proyecto): un diff que hace tres cosas a la vez no se
+  puede revisar ni revertir por partes.
 - Si la tarea está mal planteada o es imposible tal cual, **dilo y propón la alternativa** en
   lugar de inventarte un alcance distinto en silencio.
 - **No decidas por tu cuenta lo que la tarea no dice.** El fallo más caro de un modelo no es

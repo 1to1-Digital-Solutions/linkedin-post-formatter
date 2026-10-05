@@ -10,8 +10,7 @@ la deriva se note **pronto**, cuando aún es barata, sin que nadie tenga que lee
   salida temprana en vez de `else` gigantes.
 - **Un fichero, un tema.** Si un fichero acumula cosas que cambian por razones distintas,
   sepáralo.
-- **Duplicación**: dos veces puede ser casualidad; tres es un patrón que hay que extraer. Pero
-  no extraigas una abstracción para un único uso: eso es peor que la duplicación.
+- **Duplicación**: dos veces puede ser casualidad; tres es un patrón que hay que extraer.
 - **Sin código muerto ni abstracciones especulativas.** Nada de exportaciones sin usar, ficheros
   huérfanos, funciones o parámetros "por si acaso" ni capas de indirección para un único uso: lo
   que no se usa no se prueba, no se revisa y estorba, y es lo que más se acumula cuando nadie lee

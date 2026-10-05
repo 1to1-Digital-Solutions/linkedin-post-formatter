@@ -5,8 +5,6 @@ contrato de que lo que hiciste hace lo que dice.
 
 - **Si tocas lógica, deja tests que la cubran.** Si el proyecto aún no tiene tests, añade el
   mínimo para lo que has cambiado (y monta el runner si hace falta).
-- Cuando la tarea traiga criterios de aceptación, **escribe primero el test que falla** y luego
-  la implementación. Si el test pasa antes de implementar nada, el test está mal.
 - Prueba **comportamiento, no implementación**: qué entra, qué sale, qué pasa en los bordes.
   Un test que solo comprueba que se llamó a una función se rompe en cada refactor y no protege
   de nada.

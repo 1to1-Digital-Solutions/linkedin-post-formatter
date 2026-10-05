@@ -1,42 +1,15 @@
 # Procesos de larga vida
 
-Levantar el juego en un navegador es la única forma de comprobar algunas cosas —que la música
-suena, que el aro cae donde debe, que el menú se ve—, así que se hace. Lo que no puede pasar es
-dejarlo levantado.
+Levantar la app o el juego es a veces la única forma de comprobar algo; dejarlo levantado, no.
+Un `next dev` con three.js pasa de 1,5 GB, y varios olvidados ya agotaron la memoria de la
+máquina y se llevaron una sesión entera con el trabajo sin commitear.
 
-**Un `next dev` de un juego con three.js son ~1,6 GB.** Con trece repos, olvidar uno por repo son
-veintiún gigas. Ya ocurrió: se agotó la memoria de la máquina, hubo que forzar la salida de la
-terminal y se perdió la conversación entera, con el trabajo a medias y sin commitear.
-
-## Reglas
-
-- **Uno cada vez.** Levanta un servidor, comprueba lo que ibas a comprobar, mátalo. No dejes tres
-  abiertos «por si acaso»: volver a arrancarlo cuesta segundos.
-- **Mátalo por el puerto, no por el nombre.** `pkill -f next-server` **no** caza `next start`, que
-  se llama distinto, ni los navegadores que deja Playwright. El puerto se queda ocupado y el
-  siguiente arranque falla con un `EADDRINUSE` que parece otra cosa:
-
-  ```bash
-  lsof -ti :3200 | xargs -r kill -9
-  ```
-
-- **Antes de terminar, comprueba que no queda nada tuyo.** Desde Organízate:
-
-  ```bash
-  ./scripts/procesos.sh          # lista lo que hay suelto por los repos, con su memoria
-  ./scripts/procesos.sh --matar  # lo mata
-  ```
-
-  Sin argumentos solo mira. Nunca toca Docker ni los procesos de la propia sesión.
-
-- **Los navegadores también cuentan.** Un script de Playwright que se corta a medias deja el
-  navegador abierto. Cierra siempre en un `finally`, o pásale un tiempo límite.
-
-- **Puertos distintos por repo.** Cada juego tiene el suyo en su `package.json` (`PORT`). Si
-  necesitas dos a la vez, dales puertos distintos en vez de reutilizar uno: así `lsof -ti :<puerto>`
-  sigue diciendo qué mataste.
-
-## Qué no hace falta matar
-
-El stack de Supabase (Docker, puertos 54321-54324) y la app de Organízate que el usuario tenga
-levantada a mano. Ninguno de los dos es tuyo.
+- **Un servidor cada vez**: arráncalo, comprueba lo que ibas a comprobar y páralo.
+- **Tu puerto es el del entorno**: `$PORT` (Playwright lo lee de `$E2E_PORT`, que vale lo
+  mismo). No escribas uno a mano.
+- **Para por puerto o por PID, nunca por patrón**: `lsof -ti :"$PORT" | xargs -r kill`. Un
+  patrón no caza `next start` ni los navegadores de Playwright, y sí los procesos de otros.
+- **Los navegadores también cuentan**: cierra los de Playwright en un `finally` o con un tiempo
+  límite.
+- Antes de terminar, comprueba que no queda nada tuyo escuchando. Supabase (Docker) y lo que el
+  usuario levantó a mano no son tuyos: no los toques.

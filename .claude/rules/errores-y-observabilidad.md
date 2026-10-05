@@ -9,9 +9,5 @@
   (rutas, SQL, trazas) a la interfaz.
 - Distingue lo esperable de lo excepcional: que un formulario venga mal rellenado no es un
   error del sistema, es un caso normal con su respuesta.
-- Valida las entradas en el **servidor**, aunque el cliente ya valide: lo del cliente es
-  comodidad, lo del servidor es la garantía.
 - Registra lo que servirá para diagnosticar (qué operación, qué identificador, qué falló) y
   **nunca** secretos, tokens ni datos personales.
-- Los estados de carga y de error forman parte de la funcionalidad: una pantalla que no dice
-  que está cargando, o que se queda en blanco al fallar, está a medio hacer.
