@@ -10,7 +10,7 @@ import { setTheme, useTheme } from "./theme";
 const LINKS = [
   { name: "GitHub", href: "https://github.com/cpl121" },
   { name: "LinkedIn", href: "https://www.linkedin.com/in/c%C3%A9sar-pe%C3%B3n-lamparero/" },
-  { name: "source", href: "https://github.com/1to1-Digital-Solutions/formato-linkedin" },
+  { name: "source", href: "https://github.com/1to1-Digital-Solutions/linkedin-post-formatter" },
 ] as const;
 
 const control =

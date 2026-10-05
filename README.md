@@ -3,7 +3,9 @@
 Bold, italic, strikethrough, underline and code for LinkedIn posts, from Markdown or by hand.
 Paste your draft, style the words that matter and copy the result straight into LinkedIn.
 
-**Live:** https://formato-linkedin.vercel.app
+**Live:** https://linkedin-post-format.vercel.app
+
+![The editor with a styled post on the left and the "…more" preview on the right](docs/screenshot.png)
 
 Everything runs in the browser. There is no server, no database and no analytics: the text never
 leaves the page, and the draft is kept in `localStorage` so a reload does not lose it.

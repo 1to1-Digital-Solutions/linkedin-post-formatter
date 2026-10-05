@@ -4,10 +4,10 @@
   "private": true,
   "description": "Bold, italic, strikethrough and more for LinkedIn posts, from Markdown or by hand. Runs entirely in the browser.",
   "license": "MIT",
-  "homepage": "https://formato-linkedin.vercel.app",
+  "homepage": "https://linkedin-post-format.vercel.app",
   "repository": {
     "type": "git",
-    "url": "https://github.com/1to1-Digital-Solutions/formato-linkedin.git"
+    "url": "https://github.com/1to1-Digital-Solutions/linkedin-post-formatter.git"
   },
   "packageManager": "pnpm@11.6.0",
   "engines": {
