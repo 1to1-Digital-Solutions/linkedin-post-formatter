@@ -66,5 +66,12 @@ límites de caracteres de developers.buffer.com.
   un `<textarea>`; hay camino alternativo si falla.
 - **Sin servidor.** No hay nada que guardar ni proteger: página estática, borrador en
   `localStorage`, CSP que impide cargar nada de fuera. La URL es pública pero lleva `noindex`.
+- **La vista previa del «…más» es una aproximación declarada.** LinkedIn corta por caracteres o
+  por líneas, lo que llegue antes, y lo cambia sin avisar: las guías y los contadores de otras
+  herramientas coinciden en unos 210 caracteres o 5 líneas en escritorio y 140 o 3 en móvil
+  (authoredup.com, linkedgrow.ai, el artículo de Medium sobre el corte de 210). El corte por
+  caracteres y por saltos de línea lo calcula `lib/formato/gancho.ts`; las líneas que se
+  envuelven por el ancho (555 px en escritorio, 360 en móvil) las corta el CSS (`line-clamp`).
+  Por eso la página dice «aproximado» y repite los números.
 - **Mismo stack, tokens de color y reglas que el CRM**, para que el repo se trabaje igual que
   los demás de la suite.

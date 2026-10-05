@@ -17,6 +17,9 @@ se copia tal cual a LinkedIn.
   los siga reconociendo.
 - **Contador** contra el tope de 3000 (cada letra con formato cuenta dos) y **borrador** guardado
   en el navegador.
+- **Vista previa del «…más»**: lo que se ve en el feed antes del corte, en escritorio (unos 210
+  caracteres o 5 líneas) y en móvil (140 o 3). Es una aproximación: LinkedIn lo cambia según la
+  app y el ancho.
 
 El texto no sale del navegador: no hay servidor, base de datos ni analítica.
 

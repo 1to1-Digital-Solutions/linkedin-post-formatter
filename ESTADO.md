@@ -12,7 +12,8 @@
 
 **Hecha la primera versión**, desplegada en https://formato-linkedin.vercel.app: pegar (con
 conversión de Markdown), dar y quitar negrita, cursiva, tachado, subrayado y código con botón o
-atajo, quitar formato, contador contra el tope de 3000, borrador en `localStorage` y copiar.
+atajo, quitar formato, contador contra el tope de 3000, vista previa del corte de «…más»
+(escritorio y móvil), borrador en `localStorage` y copiar.
 Probado en Chrome de escritorio contra `pnpm dev` (pegar, doble clic + negrita, atajos, deshacer,
 copiar, recargar).
 
@@ -24,9 +25,8 @@ copiar, recargar).
    cambiar el valor por defecto de la opción «Dar formato también a las letras con tilde».
 2. **Probar el editor en el móvil** (Safari de iOS y Chrome de Android): seleccionar con el dedo
    y pulsar un botón. Solo está comprobado en escritorio.
-3. Posibles mejoras, solo si se echan de menos: vista previa del corte de «…ver más» (unos 210
-   caracteres en escritorio y 140 en móvil), recordar las dos opciones entre sesiones, un e2e de
-   humo con Playwright.
+3. Posibles mejoras, solo si se echan de menos: recordar las dos opciones entre sesiones, un
+   e2e de humo con Playwright.
 
 ## 🚧 Lo que bloquea o espera al usuario
 
