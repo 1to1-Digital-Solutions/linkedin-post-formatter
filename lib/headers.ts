@@ -5,8 +5,9 @@
  * nowhere, so everything stays on `'self'`, and `frame-ancestors 'none'` keeps other sites from
  * embedding it. `script-src` carries `'unsafe-inline'` because Next injects the RSC payload in
  * inline scripts; a nonce would require generating one per request. The risk is low: React
- * escapes everything it renders and `dangerouslySetInnerHTML` is not used here. In development
- * React also needs `eval()` to rebuild call stacks; it is not allowed in production.
+ * escapes everything it renders and the only inline script of our own (the theme, in
+ * `app/layout.tsx`) is a fixed string. In development React also needs `eval()` to rebuild call
+ * stacks; it is not allowed in production.
  */
 
 const DIRECTIVES = [

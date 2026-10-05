@@ -3,59 +3,46 @@
 /*
  * Colours as tokens: anthracite and the 1to1 Digital Solutions green (#1f957a) with its scale.
  * Components only use these names (`bg-surface`, `text-accent`…), never a loose hex or the
- * Tailwind palette: changing a shade means changing it here, in light and in dark.
+ * Tailwind palette: changing a shade means changing it here, once for light and once for dark.
  *
- * Surface hierarchy: `sunken` < `background` (the page) < `surface` (cards) < `raised` (hover,
- * what is active). `field` is the background of controls.
+ * Each token is a `light-dark()` pair and `color-scheme` picks the side: the browser's
+ * preference by default, or the one chosen with the theme switch (`data-theme` on `<html>`).
+ *
+ * Surface hierarchy: `background` (the page) < `surface` (cards) < `raised` (hover, what is
+ * active). `field` is the background of controls.
  *
  * `primary` is the background of the main buttons; `accent` is the green for text, one shade
  * lighter in dark mode because #1f957a does not reach 4.5:1 on anthracite.
  */
 :root {
-  color-scheme: light;
-  --background: #f4f4f5;
-  --sunken: #e9e9ec;
-  --surface: #ffffff;
-  --raised: #f0f0f2;
-  --border: #dcdce0;
-  --field-border: #8a8a93;
-  --field: #ffffff;
-  --text: #1c1c1f;
-  --muted: #52525b;
-  --primary: #188169;
-  --primary-hover: #116e57;
-  --on-primary: #ffffff;
-  --accent: #116e57;
-  --accent-soft: #d5f2ea;
-  --danger: #b91c1c;
-  --focus: #116e57;
+  color-scheme: light dark;
+  --background: light-dark(#f4f4f5, #27272a);
+  --surface: light-dark(#ffffff, #313135);
+  --raised: light-dark(#f0f0f2, #3b3b40);
+  --border: light-dark(#dcdce0, #44444a);
+  --field-border: light-dark(#8a8a93, #7a7a83);
+  --field: light-dark(#ffffff, #1e1e21);
+  --text: light-dark(#1c1c1f, #ededed);
+  --muted: light-dark(#52525b, #b0b0b8);
+  --primary: light-dark(#188169, #1f957a);
+  --primary-hover: light-dark(#116e57, #1ac89a);
+  --on-primary: light-dark(#ffffff, #1c1c1f);
+  --accent: light-dark(#116e57, #1ac89a);
+  --accent-soft: light-dark(#d5f2ea, #1d3b35);
+  --danger: light-dark(#b91c1c, #fa8a8a);
+  --focus: light-dark(#116e57, #14ffbc);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --background: #27272a;
-    --sunken: #1e1e21;
-    --surface: #313135;
-    --raised: #3b3b40;
-    --border: #44444a;
-    --field-border: #7a7a83;
-    --field: #1e1e21;
-    --text: #ededed;
-    --muted: #b0b0b8;
-    --primary: #1f957a;
-    --primary-hover: #1ac89a;
-    --on-primary: #1c1c1f;
-    --accent: #1ac89a;
-    --accent-soft: #1d3b35;
-    --danger: #fa8a8a;
-    --focus: #14ffbc;
-  }
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-sunken: var(--sunken);
   --color-surface: var(--surface);
   --color-raised: var(--raised);
   --color-border: var(--border);
