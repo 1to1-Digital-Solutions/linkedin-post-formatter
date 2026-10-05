@@ -1,83 +1,78 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef } from "react";
 
-import { EMOJIS, type EmojiGroup } from "./emojis";
-import { useMessages } from "./i18n/locale";
+import type Picker from "emoji-picker-element/picker";
+
+import { useLocale, useMessages, type Locale } from "./i18n/locale";
+import { Popover, usePopoverClose } from "./popover";
 import { button } from "./styles";
+import { useTheme } from "./theme";
 
-/**
- * A button that opens a small grid of emojis. The grid is a dialog: Escape and clicking outside
- * close it, and the focus comes back to the button.
- */
+/** The "Emoji" button: the full emoji picker, with search and skin tones, in the current language. */
 export function EmojiPicker({ onPick }: { onPick: (emoji: string) => void }) {
   const t = useMessages();
-  const id = useId();
-  const [open, setOpen] = useState(false);
-  const root = useRef<HTMLDivElement>(null);
-  const trigger = useRef<HTMLButtonElement>(null);
+  return (
+    <Popover
+      button={
+        <>
+          <span aria-hidden="true">🙂</span> {t.emoji.button}
+        </>
+      }
+      buttonClassName={button}
+      role="dialog"
+      label={t.emoji.dialog}
+      panelClassName="overflow-hidden lg:w-[22rem]"
+    >
+      <Panel onPick={onPick} />
+    </Popover>
+  );
+}
+
+const TRANSLATIONS: Record<Locale, () => Promise<{ default: object }>> = {
+  en: () => import("emoji-picker-element/i18n/en"),
+  es: () => import("emoji-picker-element/i18n/es"),
+};
+
+/**
+ * `emoji-picker-element` is a web component, so it is created by hand once the panel opens.
+ * Its data (one JSON per language) is served by `app/emoji-data/[locale]/route.ts`, from this
+ * same origin: the page loads nothing from outside. The component caches it in IndexedDB.
+ */
+function Panel({ onPick }: { onPick: (emoji: string) => void }) {
+  const locale = useLocale();
+  const theme = useTheme();
+  const close = usePopoverClose();
+  const host = useRef<HTMLDivElement>(null);
+  const pick = useEffectEvent((emoji: string) => {
+    onPick(emoji);
+    close();
+  });
 
   useEffect(() => {
-    if (!open) return;
-    const onPointerDown = (event: PointerEvent) => {
-      if (!root.current?.contains(event.target as Node)) setOpen(false);
+    let cancelled = false;
+    let picker: Picker | undefined;
+    Promise.all([import("emoji-picker-element"), TRANSLATIONS[locale]()]).then(([{ Picker }, i18n]) => {
+      if (cancelled || !host.current) return;
+      picker = new Picker({ locale, dataSource: `/emoji-data/${locale}`, i18n: i18n.default as never });
+      picker.classList.add(theme);
+      picker.style.width = "100%";
+      picker.style.height = "22rem";
+      picker.addEventListener("emoji-click", (event) => {
+        if (event.detail.unicode) pick(event.detail.unicode);
+      });
+      host.current.replaceChildren(picker);
+    });
+    return () => {
+      cancelled = true;
+      picker?.remove();
     };
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [open]);
-
-  function close() {
-    setOpen(false);
-    trigger.current?.focus();
-  }
+  }, [locale, theme]);
 
   return (
-    <div ref={root} className="relative">
-      <button
-        ref={trigger}
-        type="button"
-        className={button}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        aria-controls={id}
-        onClick={() => setOpen((o) => !o)}
-      >
-        <span aria-hidden="true">🙂</span> {t.emoji.button}
-      </button>
-      {open && (
-        <div
-          id={id}
-          role="dialog"
-          aria-label={t.emoji.dialog}
-          // A sheet at the bottom on small screens, a popover under the button on large ones.
-          className="z-20 rounded-lg border border-border bg-surface p-2 shadow-lg max-h-[70dvh] overflow-y-auto max-lg:fixed max-lg:inset-x-4 max-lg:bottom-[max(1rem,env(safe-area-inset-bottom))] lg:absolute lg:top-full lg:left-0 lg:mt-1 lg:w-80"
-          onKeyDown={(event) => {
-            if (event.key === "Escape") close();
-          }}
-        >
-          {(Object.keys(EMOJIS) as EmojiGroup[]).map((group) => (
-            <section key={group} aria-label={t.emojiGroups[group]} className="mb-1 last:mb-0">
-              <h3 className="px-1 text-xs font-semibold text-muted">{t.emojiGroups[group]}</h3>
-              <div className="grid grid-cols-6">
-                {EMOJIS[group].map((emoji) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    aria-label={t.emojiNames[emoji] ?? emoji}
-                    className="flex min-h-11 items-center justify-center rounded-md text-xl hover:bg-raised pointer-fine:min-h-9"
-                    onClick={() => {
-                      onPick(emoji);
-                      close();
-                    }}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      )}
-    </div>
+    <div
+      ref={host}
+      className="h-[22rem] [--background:var(--surface)] [--border-color:var(--border)] [--button-hover-background:var(--raised)] [--indicator-color:var(--accent)] [--input-border-color:var(--field-border)] [--input-font-color:var(--text)] [--input-placeholder-color:var(--muted)]"
+    />
   );
 }
