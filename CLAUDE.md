@@ -16,7 +16,8 @@ text never leaves the browser (the draft lives in `localStorage`).
   (links, hashtags and mentions, which never get styled), `lists.ts` (bulleted and numbered
   lines), `hook.ts` (the "…more" cut), `diff.ts` and `limit.ts`. Tested at 100 %.
 - `app/` is the wrapper: `_ui/editor.tsx` connects `lib/` to the `<textarea>`, the clipboard and
-  the draft. No logic goes there. Every interface text lives in `_ui/i18n/en.ts` and `es.ts`
+  the draft; `_ui/popover.tsx` is the shared button-plus-panel used by the list menu and the
+  emoji picker (`emoji-picker-element`, whose data `app/emoji-data/` serves). No logic goes there. Every interface text lives in `_ui/i18n/en.ts` and `es.ts`
   (same shape, checked by TypeScript); language, theme and draft persist through `_ui/stored.ts`.
 
 **Run and check:** `pnpm dev` (http://127.0.0.1:3400). Gates: `pnpm typecheck && pnpm lint &&

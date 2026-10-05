@@ -12,7 +12,7 @@ leaves the page, and the draft is kept in `localStorage` so a reload does not lo
 
 - **Converts Markdown on paste**: `**bold**`, `*italic*`, `~~strike~~`, `` `code` ``, headings
   (`# …`, as bold), bullets (`- …` → `•`) and links (`[text](url)` → `text (url)`). Everything
-  else stays as written.
+  else stays as written. No button to press: paste and it is done.
 - **Formats by hand**: double-click a word (or select some text, or just leave the caret on a
   word) and press a button or a shortcut: `Ctrl/⌘ + B`, `I`, `U` and `Shift + X`. Pressing it
   again removes the style. `Ctrl/⌘ + Z` undoes, because changes are typed into the field instead
@@ -20,8 +20,9 @@ leaves the page, and the draft is kept in `localStorage` so a reload does not lo
 - **Styles accented letters** (á, ñ, ü…) as the styled letter plus a combining accent, so a word
   does not end up half bold. It can be turned off if a device renders the accent out of place.
 - **Never touches links, emails, #hashtags or @mentions**, so LinkedIn keeps recognizing them.
-- **Lists and emojis**: bulleted and numbered lists on the selected lines (Enter continues the
-  list), and a small picker of the emojis that actually show up in LinkedIn posts.
+- **Lists and emojis**: a List menu with bullets, dashes, arrows, check marks, pointing hands,
+  diamonds, numbers and number emojis on the selected lines (Enter continues the list), and a
+  full emoji picker with search and skin tones.
 - **Counts characters** the way LinkedIn does (every styled letter counts two toward the 3,000
   limit) and **previews the "…more" cut** on desktop and mobile.
 - **English or Spanish interface** and **light or dark theme**, following the browser until you
@@ -54,7 +55,9 @@ finds what must stay plain, `lists.ts` handles bulleted and numbered lines, `hoo
 "…more" cut. `app/` is the thin wrapper that connects it to the `<textarea>`, the clipboard and
 `localStorage`; the interface texts live in `app/_ui/i18n/`.
 
-Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4 and Vitest. Deployed on Vercel.
+Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4 and Vitest, plus
+[emoji-picker-element](https://github.com/nolanlawson/emoji-picker-element) for the emoji picker
+(its data is served from this same origin by `app/emoji-data/`). Deployed on Vercel.
 
 ## License
 

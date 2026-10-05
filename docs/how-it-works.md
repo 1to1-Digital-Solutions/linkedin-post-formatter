@@ -68,10 +68,16 @@ linkedgrow.ai.
 - **The "…more" preview is declared approximate.** The cut by characters and line breaks is
   computed in `lib/format/hook.ts`; lines that wrap because of the width (555 px on desktop,
   360 px on mobile) are clamped by CSS.
-- **Lists are just lines** starting with `• ` or `1. `, the same thing the Markdown conversion
-  writes; the buttons and Enter only add or remove those markers (`lib/format/lists.ts`).
-- **Emojis come from a short curated list**, not from a picker library: a full emoji dataset
-  weighs more than the whole tool, and a LinkedIn post uses a few dozen of them at most.
+- **Lists are just lines** starting with a marker (`• `, `→ `, `✅ `, `1. `, `1️⃣ `…), the same
+  thing the Markdown conversion writes for bullets; the menu and Enter only add, swap or remove
+  those markers (`lib/format/lists.ts`). Number emojis exist up to `🔟`; from eleven on the
+  plain number takes over.
+- **The emoji picker is `emoji-picker-element`**, the one dependency beyond the framework: a
+  web component with search, skin tones and translations, which keeps its data in IndexedDB.
+  The data (one JSON per language, about 440 KB) is served by a prerendered route of this app
+  instead of its default CDN, so the page keeps loading nothing from outside.
+- **No "clear format" or "convert" buttons.** Pasting already converts Markdown, and a style is
+  removed by pressing it again on the same selection.
 - **Two languages without a library**: the texts are two TypeScript objects with the same shape
   (`app/_ui/i18n/`), so a missing translation is a type error. English by default, Spanish on
   request, remembered in `localStorage`.
