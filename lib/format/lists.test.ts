@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { continueList, listKind, toggleList } from "./lists";
+import { continueList, listKind, LIST_KINDS, marker, toggleList } from "./lists";
 
 const all = (text: string) => ({ start: 0, end: text.length });
 const caretAt = (position: number) => ({ start: position, end: position });
@@ -49,6 +49,32 @@ describe("toggleList", () => {
     expect(toggleList(text, all(text), "bullet").text).toBe("• one\n• two\n• three");
   });
 
+  it("offers arrows, check marks, pointing hands, dashes and diamonds too", () => {
+    const text = "one\ntwo";
+    expect(toggleList(text, all(text), "arrow").text).toBe("→ one\n→ two");
+    expect(toggleList(text, all(text), "check").text).toBe("✅ one\n✅ two");
+    expect(toggleList(text, all(text), "pointing").text).toBe("👉 one\n👉 two");
+    expect(toggleList(text, all(text), "dash").text).toBe("– one\n– two");
+    expect(toggleList(text, all(text), "diamond").text).toBe("🔹 one\n🔹 two");
+    expect(toggleList("✅ one\n✅ two", { start: 0, end: 11 }, "check").text).toBe("one\ntwo");
+  });
+
+  it("numbers with keycap emojis up to ten and with plain numbers after that", () => {
+    const text = Array.from({ length: 11 }, (_, i) => `item ${i + 1}`).join("\n");
+    const lines = toggleList(text, all(text), "keycap").text.split("\n");
+    expect(lines[0]).toBe("1️⃣ item 1");
+    expect(lines[9]).toBe("🔟 item 10");
+    expect(lines[10]).toBe("11. item 11");
+    expect(toggleList("1️⃣ one\n2️⃣ two", { start: 0, end: 13 }, "keycap").text).toBe("one\ntwo");
+  });
+
+  it("every kind has a marker and reads back as itself", () => {
+    for (const kind of LIST_KINDS) {
+      const text = `${marker(kind, 1)}one`;
+      expect(listKind(text, { start: 0, end: text.length })).toBe(kind);
+    }
+  });
+
   it("a marker alone counts as a list line", () => {
     expect(toggleList("• ", caretAt(2), "bullet")).toEqual({ text: "", selection: caretAt(0), changed: true });
   });
@@ -84,6 +110,9 @@ describe("continueList", () => {
 
   it("on a numbered line adds the next number, keeping the indentation", () => {
     expect(continueList("  3. three", 10)).toEqual({ text: "  3. three\n  4. ", selection: caretAt(16), changed: true });
+    expect(continueList("9️⃣ nine", "9️⃣ nine".length)?.text).toBe("9️⃣ nine\n🔟 ");
+    expect(continueList("🔟 ten", 6)?.text).toBe("🔟 ten\n11. ");
+    expect(continueList("→ one", 5)?.text).toBe("→ one\n→ ");
   });
 
   it("splits the line if the caret is in the middle, and only looks at the caret's line", () => {
