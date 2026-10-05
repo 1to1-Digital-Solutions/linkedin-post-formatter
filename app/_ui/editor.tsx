@@ -2,16 +2,17 @@
 
 import { useMemo, useRef, useState, type ClipboardEvent, type KeyboardEvent, type SyntheticEvent } from "react";
 
-import { activeStyles, clearFormat, toggle, type Change } from "@/lib/format/apply";
+import { activeStyles, toggle, type Change } from "@/lib/format/apply";
 import type { Style } from "@/lib/format/glyphs";
 import { charactersUsed, POST_LIMIT } from "@/lib/format/limit";
-import { continueList, listKind, toggleList, type ListKind } from "@/lib/format/lists";
+import { continueList, listKind, toggleList } from "@/lib/format/lists";
 import { markdownToUnicode } from "@/lib/format/markdown";
 
 import { saveDraft, useDraft } from "./draft";
 import { EmojiPicker } from "./emoji-picker";
 import { Help } from "./help";
 import { useMessages } from "./i18n/locale";
+import { ListMenu } from "./list-menu";
 import { Preview } from "./preview";
 import { button, card, checkboxRow, formatButton, muted, primaryButton } from "./styles";
 import { Tooltip } from "./tooltip";
@@ -24,11 +25,6 @@ const STYLE_BUTTONS: { style: Style; className: string; shortcut?: string; keys?
   { style: "strike", className: "line-through", shortcut: "Ctrl/⌘ + Shift + X", keys: "Control+Shift+X Meta+Shift+X" },
   { style: "underline", className: "underline", shortcut: "Ctrl/⌘ + U", keys: "Control+U Meta+U" },
   { style: "mono", className: "font-mono" },
-];
-
-const LIST_BUTTONS: { kind: ListKind; glyph: string }[] = [
-  { kind: "bullet", glyph: "•" },
-  { kind: "numbered", glyph: "1." },
 ];
 
 const SHORTCUTS: Record<string, Style> = { b: "bold", i: "italic", u: "underline" };
@@ -154,36 +150,8 @@ export function Editor() {
             </button>
           ))}
           <span className="mx-1 h-6 w-px bg-border" aria-hidden="true" />
-          {LIST_BUTTONS.map(({ kind, glyph }) => (
-            <button
-              key={kind}
-              type="button"
-              className={formatButton}
-              aria-pressed={activeList === kind}
-              aria-label={t.lists[kind]}
-              title={t.lists[kind]}
-              onMouseDown={keepFocus}
-              onClick={() => edit((value, selected) => toggleList(value, selected, kind), t.messages.noList)}
-            >
-              <span aria-hidden="true">
-                <span className="font-semibold">{glyph}</span> {t.listShort}
-              </span>
-            </button>
-          ))}
+          <ListMenu active={activeList} onPick={(kind) => edit((value, selected) => toggleList(value, selected, kind), t.messages.noList)} />
           <EmojiPicker onPick={insert} />
-          <span className="mx-1 h-6 w-px bg-border" aria-hidden="true" />
-          <button type="button" className={button} onMouseDown={keepFocus} onClick={() => edit(clearFormat, t.messages.nothingToClear)}>
-            {t.clearFormat}
-          </button>
-          <button
-            type="button"
-            className={`${button} sm:ml-auto`}
-            title={t.convertMarkdownHint}
-            onMouseDown={keepFocus}
-            onClick={() => replaceAll(markdownToUnicode(text, { accents }), t.messages.noMarkdown)}
-          >
-            {t.convertMarkdown}
-          </button>
         </div>
 
         <label htmlFor="post" className="sr-only">
@@ -204,7 +172,7 @@ export function Editor() {
           spellCheck
           rows={10}
           aria-describedby="counter"
-          className="block min-h-[40dvh] w-full flex-1 resize-none bg-field px-4 py-3 text-base leading-relaxed text-text outline-none placeholder:text-muted lg:min-h-0"
+          className="block min-h-[60dvh] w-full flex-1 resize-none bg-field px-4 py-3 text-base leading-relaxed text-text outline-none placeholder:text-muted lg:min-h-0"
         />
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-b-lg border-t border-border p-2 pl-4">

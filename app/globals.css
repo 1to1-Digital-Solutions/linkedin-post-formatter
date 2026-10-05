@@ -76,6 +76,12 @@ body {
   outline-offset: 2px;
 }
 
+/* Buttons and disclosure summaries are clickable and say so with the pointer. */
+button:not(:disabled),
+summary {
+  cursor: pointer;
+}
+
 /* The editor's focus ring goes around the whole card (`focus-within`), not around the field. */
 textarea:focus-visible {
   outline: none;
