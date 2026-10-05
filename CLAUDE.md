@@ -6,6 +6,10 @@ characters that look like letters. Paste the draft (Markdown included), tweak wi
 and a button or a shortcut, copy. See `README.md` for the feature list and `docs/how-it-works.md`
 for the mechanics and the decisions.
 
+**Local context:** if an `ESTADO.md` exists next to this file, read it first. It is ignored by
+git (this repository is public) and carries the current state, what is pending and the
+operational decisions that do not belong in the open.
+
 **Stack:** Next.js 16 (App Router), React 19, strict TypeScript, Tailwind 4, pnpm, Node 24,
 Vitest. No server of its own, no database, no environment variables: the page is static and the
 text never leaves the browser (the draft lives in `localStorage`).

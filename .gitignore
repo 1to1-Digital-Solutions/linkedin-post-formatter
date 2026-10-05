@@ -19,3 +19,8 @@ coverage/
 
 # System
 .DS_Store
+
+# Local context for agents (handoff and suite rules): never published
+ESTADO.md
+.claude/
+.organizate/
