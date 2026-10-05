@@ -20,8 +20,12 @@ leaves the page, and the draft is kept in `localStorage` so a reload does not lo
 - **Styles accented letters** (á, ñ, ü…) as the styled letter plus a combining accent, so a word
   does not end up half bold. It can be turned off if a device renders the accent out of place.
 - **Never touches links, emails, #hashtags or @mentions**, so LinkedIn keeps recognizing them.
+- **Lists and emojis**: bulleted and numbered lists on the selected lines (Enter continues the
+  list), and a small picker of the emojis that actually show up in LinkedIn posts.
 - **Counts characters** the way LinkedIn does (every styled letter counts two toward the 3,000
   limit) and **previews the "…more" cut** on desktop and mobile.
+- **English or Spanish interface** and **light or dark theme**, following the browser until you
+  pick one. Both choices are remembered.
 
 ## How it works
 
@@ -46,8 +50,9 @@ pnpm dev       # http://127.0.0.1:3400
 
 The logic lives in `lib/format/` and is pure and fully tested: `glyphs.ts` reads and writes styled
 letters, `apply.ts` toggles styles on a selection, `markdown.ts` converts Markdown, `protected.ts`
-finds what must stay plain, `hook.ts` computes the "…more" cut. `app/` is the thin wrapper that
-connects it to the `<textarea>`, the clipboard and `localStorage`.
+finds what must stay plain, `lists.ts` handles bulleted and numbered lines, `hook.ts` computes the
+"…more" cut. `app/` is the thin wrapper that connects it to the `<textarea>`, the clipboard and
+`localStorage`; the interface texts live in `app/_ui/i18n/`.
 
 Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4 and Vitest. Deployed on Vercel.
 

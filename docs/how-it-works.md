@@ -68,5 +68,15 @@ linkedgrow.ai.
 - **The "…more" preview is declared approximate.** The cut by characters and line breaks is
   computed in `lib/format/hook.ts`; lines that wrap because of the width (555 px on desktop,
   360 px on mobile) are clamped by CSS.
+- **Lists are just lines** starting with `• ` or `1. `, the same thing the Markdown conversion
+  writes; the buttons and Enter only add or remove those markers (`lib/format/lists.ts`).
+- **Emojis come from a short curated list**, not from a picker library: a full emoji dataset
+  weighs more than the whole tool, and a LinkedIn post uses a few dozen of them at most.
+- **Two languages without a library**: the texts are two TypeScript objects with the same shape
+  (`app/_ui/i18n/`), so a missing translation is a type error. English by default, Spanish on
+  request, remembered in `localStorage`.
+- **The theme is `color-scheme` plus `light-dark()`**: every colour token is a light/dark pair
+  and `data-theme` on `<html>` only picks the side, so the browser's preference wins until the
+  person chooses. An inline script applies the remembered choice before the first paint.
 - **No server.** Nothing to store or protect: a static page, the draft in `localStorage`, and a
   Content Security Policy that forbids loading anything from outside.
