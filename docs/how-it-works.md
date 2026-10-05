@@ -1,77 +1,72 @@
-# Historial — por qué está esto así
+# How it works, and why it is built this way
 
-No se lee al empezar una sesión: solo cuando la pregunta es «por qué está esto así».
+## "Formatting" on LinkedIn
 
-## El research de partida: cómo se da «formato» en LinkedIn
+**LinkedIn has no formatting.** The post editor stores plain text: it drops HTML and does not
+parse Markdown. That is why the bold from a Markdown editor disappears on paste.
 
-**LinkedIn no tiene formato.** El editor de posts guarda texto plano: descarta el HTML y no
-interpreta Markdown. Por eso la negrita de Obsidian se pierde al pegar.
+**Every "LinkedIn text formatter" does the same thing**, and it is simple: it swaps each letter for
+another one that looks like it.
 
-**Lo que hacen todas las webs de «LinkedIn text formatter»** es lo mismo, y es sencillo: cambian
-cada letra por otra que se le parece.
+- **Bold, italic, monospace**: letters from the Unicode *Mathematical Alphanumeric Symbols*
+  block (U+1D400–U+1D7FF), meant for formulas. There are serif, sans-serif, script, fraktur…
+  alphabets. The ones that read as "normal text in bold" in the feed are the sans-serif ones:
+  bold from U+1D5D4, italic from U+1D608, bold italic from U+1D63C, monospace from U+1D670;
+  bold digits from U+1D7EC and monospace digits from U+1D7F6. There are no italic digits.
+- **Strikethrough and underline**: a combining mark after each character (U+0336 and U+0332).
+- **Accented letters**: they have no twin in that block. Naive tools leave them plain and the word
+  ends up half styled (`𝗰𝗮𝗺𝗶ó𝗻`); careful ones decompose the letter (NFD) and write the styled
+  letter followed by the combining accent (`𝗼` + U+0301).
+- **Hashtags, mentions and links**: with letters from another alphabet they stop working, so
+  careful tools leave them alone.
 
-- **Negrita, cursiva, monoespaciado**: letras del bloque Unicode *Mathematical Alphanumeric
-  Symbols* (U+1D400–U+1D7FF), pensado para fórmulas. Hay alfabetos con serifa, de palo seco,
-  caligráficos, góticos… Los que parecen «texto normal en negrita» en el feed son los de palo
-  seco: negrita desde U+1D5D4, cursiva desde U+1D608, negrita cursiva desde U+1D63C,
-  monoespaciado desde U+1D670; cifras en negrita desde U+1D7EC y monoespaciadas desde U+1D7F6.
-  No existen cifras en cursiva.
-- **Tachado y subrayado**: una marca combinante detrás de cada carácter (U+0336 y U+0332).
-- **Tildes y ñ**: no tienen gemela en ese bloque. Las herramientas malas las dejan en letra
-  normal y la palabra queda a medias (`𝗰𝗮𝗺𝗶ó𝗻`); las buenas descomponen la letra (NFD) y escriben
-  la letra con estilo seguida de la tilde combinante (`𝗼` + U+0301).
-- **Hashtags, menciones y enlaces**: con letras de otro alfabeto dejan de funcionar; las
-  herramientas cuidadas los dejan sin formato.
+**The caveats belong to the technique, not to the tool:**
 
-**Las pegas, que son de la técnica y no de la herramienta:**
+- **Accessibility**: a screen reader reads "mathematical sans-serif bold small a" letter by
+  letter, or skips the text altogether.
+- **Search**: for LinkedIn's search those words are not words.
+- **Counting**: LinkedIn counts the 3,000 limit in UTF-16 code units, and each styled letter
+  takes two (per Buffer's developer documentation).
+- **Rendering**: devices without a font for that block show boxes. Rare today; what does vary is
+  where the combining accent lands.
+- Hence the usual advice: style a few anchor words and the hook, never whole paragraphs.
 
-- **Accesibilidad**: un lector de pantalla lee «mathematical sans-serif bold small a» letra a
-  letra, o se salta el texto.
-- **Búsqueda**: para el buscador de LinkedIn esas palabras no son palabras.
-- **Recuento**: LinkedIn cuenta el tope de 3000 en unidades UTF-16 y cada letra con estilo
-  ocupa dos (dato de la documentación para desarrolladores de Buffer).
-- **Render**: en dispositivos sin fuente para ese bloque salen cuadrados. Hoy es raro; lo que
-  puede variar es dónde cae la tilde combinante.
-- De ahí la recomendación común: formato solo en unas pocas palabras ancla y en el gancho,
-  nunca en párrafos.
+**The "…more" cut** is not one fixed number. Guides and other tools' counters agree on roughly
+210 characters or 5 lines on desktop and 140 characters or 3 lines on mobile, whichever comes
+first, and LinkedIn changes it with the app version and the window width. The preview says
+"approximate" for that reason.
 
-Fuentes consultadas: la guía de formato Unicode de linkedinpreview.com, el formateador de
-jasperbernaers.com (el más completo: convierte Markdown, protege hashtags y enlaces, da estilo a
-las tildes), los de tryordinal.com, socialrails.com, spurnow.com y supergrow.ai, y la guía de
-límites de caracteres de developers.buffer.com.
+Sources: the Unicode formatting guide at linkedinpreview.com, the formatter at
+jasperbernaers.com (the most complete one: converts Markdown, protects hashtags and links, styles
+accents), the ones at tryordinal.com, socialrails.com, spurnow.com and supergrow.ai, the character
+limits guide at developers.buffer.com, and the "see more" articles at authoredup.com and
+linkedgrow.ai.
 
-## Decisiones
+## Decisions
 
-- **El editor es un `<textarea>` cuyo contenido ya es el texto final.** Lo que se ve es lo que
-  se copia; no hay un modelo de documento aparte ni un paso de «exportar». Dar formato es
-  reescribir los caracteres seleccionados. La alternativa (un editor `contentEditable` con
-  negrita de verdad que se convierte al copiar) es mucho más código y peor accesibilidad para
-  el mismo resultado.
-- **Los estilos se leen del propio texto** (`descomponer` en `glifos.ts`): por eso el botón
-  sabe si la selección ya está en negrita y la quita, y por eso se puede pegar texto ya
-  formateado y seguir editándolo.
-- **Solo alfabetos de palo seco.** No tienen huecos (en los de serifa, la `h` cursiva vive en
-  otro bloque) y son los que se leen como negrita y cursiva corrientes. Los demás (serifa,
-  caligráfica…) solo se reconocen para poder limpiarlos con «Quitar formato» (NFKC).
-- **Las tildes llevan formato por defecto**, con una opción para dejarlas en letra normal por si
-  algún dispositivo coloca mal la marca combinante. En Chrome de macOS se ven bien; en las apps
-  de LinkedIn de Android e iOS está por comprobar.
-- **Enlaces, correos, #hashtags y @menciones nunca llevan formato**, ni al convertir Markdown ni
-  a mano. «Quitar formato» sí actúa sobre ellos, para arreglar los que llegaron rotos.
-- **Markdown: se convierte lo que tiene equivalente** y lo demás se queda como está escrito
-  (citas, listas numeradas, imágenes, tablas). Los saltos de línea se respetan todos. Los
-  enlaces pasan a `texto (url)` porque LinkedIn solo enlaza direcciones a la vista.
-- **Los cambios se «teclean» con `execCommand("insertText")`** sobre el trozo mínimo que cambia
-  (`diferencia.ts`). Está obsoleto, pero es lo único que conserva el deshacer del navegador en
-  un `<textarea>`; hay camino alternativo si falla.
-- **Sin servidor.** No hay nada que guardar ni proteger: página estática, borrador en
-  `localStorage`, CSP que impide cargar nada de fuera. La URL es pública pero lleva `noindex`.
-- **La vista previa del «…más» es una aproximación declarada.** LinkedIn corta por caracteres o
-  por líneas, lo que llegue antes, y lo cambia sin avisar: las guías y los contadores de otras
-  herramientas coinciden en unos 210 caracteres o 5 líneas en escritorio y 140 o 3 en móvil
-  (authoredup.com, linkedgrow.ai, el artículo de Medium sobre el corte de 210). El corte por
-  caracteres y por saltos de línea lo calcula `lib/formato/gancho.ts`; las líneas que se
-  envuelven por el ancho (555 px en escritorio, 360 en móvil) las corta el CSS (`line-clamp`).
-  Por eso la página dice «aproximado» y repite los números.
-- **Mismo stack, tokens de color y reglas que el CRM**, para que el repo se trabaje igual que
-  los demás de la suite.
+- **The editor is a `<textarea>` whose content already is the final text.** What you see is what
+  you copy; there is no separate document model and no "export" step. Formatting is rewriting the
+  selected characters. The alternative (a `contentEditable` editor with real bold that converts
+  on copy) is far more code and worse accessibility for the same result.
+- **Styles are read from the text itself** (`decompose` in `lib/format/glyphs.ts`): that is how a
+  button knows the selection is already bold and removes it, and how text pasted from another
+  tool can keep being edited.
+- **Sans-serif alphabets only.** They have no holes (in the serif ones the italic `h` lives in
+  another block) and they read as ordinary bold and italic. The others (serif, script…) are only
+  recognized so that "Clear format" can remove them (NFKC).
+- **Accented letters are styled by default**, with an option to leave them plain in case a device
+  places the combining mark badly. Verified in desktop browsers; worth checking in the LinkedIn
+  apps on Android and iOS.
+- **Links, emails, #hashtags and @mentions are never styled**, neither when converting Markdown
+  nor by hand. "Clear format" does act on them, to repair ones that arrived broken.
+- **Markdown: what has an equivalent is converted**, the rest stays as written (quotes, numbered
+  lists, images, tables). Every line break is kept. Links become `text (url)` because LinkedIn
+  only links visible addresses.
+- **Changes are "typed" with `execCommand("insertText")`** over the smallest piece that changes
+  (`lib/format/diff.ts`). It is obsolete, but it is the only thing that keeps the browser's undo
+  in a `<textarea>`; there is a fallback if it fails.
+- **The "…more" preview is declared approximate.** The cut by characters and line breaks is
+  computed in `lib/format/hook.ts`; lines that wrap because of the width (555 px on desktop,
+  360 px on mobile) are clamped by CSS.
+- **No server.** Nothing to store or protect: a static page, the draft in `localStorage`, and a
+  Content Security Policy that forbids loading anything from outside.

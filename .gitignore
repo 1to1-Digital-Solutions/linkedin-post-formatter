@@ -1,4 +1,4 @@
-# Dependencias
+# Dependencies
 node_modules/
 
 # Next.js
@@ -6,10 +6,10 @@ node_modules/
 next-env.d.ts
 *.tsbuildinfo
 
-# Cobertura
+# Coverage
 coverage/
 
-# Entorno: nada de secretos en git
+# Environment: no secrets in git
 .env
 .env.*
 !.env.example
@@ -17,5 +17,5 @@ coverage/
 # Vercel
 .vercel/
 
-# Sistema
+# System
 .DS_Store
