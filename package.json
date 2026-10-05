@@ -1,8 +1,14 @@
 {
-  "name": "formato-linkedin",
+  "name": "linkedin-post-formatter",
   "version": "0.1.0",
   "private": true,
-  "description": "Da formato (negrita, cursiva, tachado…) al texto de un post de LinkedIn con caracteres Unicode, a partir de Markdown o a mano.",
+  "description": "Bold, italic, strikethrough and more for LinkedIn posts, from Markdown or by hand. Runs entirely in the browser.",
+  "license": "MIT",
+  "homepage": "https://formato-linkedin.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1to1-Digital-Solutions/formato-linkedin.git"
+  },
   "packageManager": "pnpm@11.6.0",
   "engines": {
     "node": ">=24.15.0"
