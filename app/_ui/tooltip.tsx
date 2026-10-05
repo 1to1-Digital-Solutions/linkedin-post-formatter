@@ -6,14 +6,14 @@ import { useId, useState, type ReactNode } from "react";
  * A small "?" that explains a control. It shows on hover and on keyboard focus, and a tap
  * toggles it for touch screens, where there is no hover. Escape closes it.
  */
-export function Tooltip({ about, children }: { about: string; children: ReactNode }) {
+export function Tooltip({ label, children }: { label: string; children: ReactNode }) {
   const id = useId();
   const [open, setOpen] = useState(false);
   return (
     <span className="relative inline-flex">
       <button
         type="button"
-        aria-label={`About “${about}”`}
+        aria-label={label}
         aria-describedby={id}
         aria-expanded={open}
         className="peer inline-flex size-11 items-center justify-center rounded-full text-muted hover:text-accent pointer-fine:size-6"

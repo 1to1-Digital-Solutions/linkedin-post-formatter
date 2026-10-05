@@ -5,30 +5,39 @@ import { useMemo, useRef, useState, type ClipboardEvent, type KeyboardEvent, typ
 import { activeStyles, clearFormat, toggle, type Change } from "@/lib/format/apply";
 import type { Style } from "@/lib/format/glyphs";
 import { charactersUsed, POST_LIMIT } from "@/lib/format/limit";
+import { continueList, listKind, toggleList, type ListKind } from "@/lib/format/lists";
 import { markdownToUnicode } from "@/lib/format/markdown";
 
 import { saveDraft, useDraft } from "./draft";
+import { EmojiPicker } from "./emoji-picker";
 import { Help } from "./help";
+import { useMessages } from "./i18n/locale";
 import { Preview } from "./preview";
 import { button, card, checkboxRow, formatButton, muted, primaryButton } from "./styles";
 import { Tooltip } from "./tooltip";
 import { typeInto } from "./type-into";
 
 /** Each button shows its style with CSS; the name is what a screen reader reads. */
-const BUTTONS: { style: Style; name: string; className: string; shortcut?: string; keys?: string }[] = [
-  { style: "bold", name: "Bold", className: "font-bold", shortcut: "Ctrl/⌘ + B", keys: "Control+B Meta+B" },
-  { style: "italic", name: "Italic", className: "italic", shortcut: "Ctrl/⌘ + I", keys: "Control+I Meta+I" },
-  { style: "strike", name: "Strike", className: "line-through", shortcut: "Ctrl/⌘ + Shift + X", keys: "Control+Shift+X Meta+Shift+X" },
-  { style: "underline", name: "Underline", className: "underline", shortcut: "Ctrl/⌘ + U", keys: "Control+U Meta+U" },
-  { style: "mono", name: "Code", className: "font-mono" },
+const STYLE_BUTTONS: { style: Style; className: string; shortcut?: string; keys?: string }[] = [
+  { style: "bold", className: "font-bold", shortcut: "Ctrl/⌘ + B", keys: "Control+B Meta+B" },
+  { style: "italic", className: "italic", shortcut: "Ctrl/⌘ + I", keys: "Control+I Meta+I" },
+  { style: "strike", className: "line-through", shortcut: "Ctrl/⌘ + Shift + X", keys: "Control+Shift+X Meta+Shift+X" },
+  { style: "underline", className: "underline", shortcut: "Ctrl/⌘ + U", keys: "Control+U Meta+U" },
+  { style: "mono", className: "font-mono" },
+];
+
+const LIST_BUTTONS: { kind: ListKind; glyph: string }[] = [
+  { kind: "bullet", glyph: "•" },
+  { kind: "numbered", glyph: "1." },
 ];
 
 const SHORTCUTS: Record<string, Style> = { b: "bold", i: "italic", u: "underline" };
 
-const NOTHING_TO_FORMAT =
-  "Nothing to format there. Select a word or put the caret on it. Links, #hashtags and @mentions always stay plain so they keep working.";
+/** Keeps the focus (and the visible selection) in the text when a toolbar button is clicked. */
+const keepFocus = (event: { preventDefault: () => void }) => event.preventDefault();
 
 export function Editor() {
+  const t = useMessages();
   const text = useDraft();
   const area = useRef<HTMLTextAreaElement>(null);
   const [selection, setSelection] = useState({ start: 0, end: 0 });
@@ -37,6 +46,7 @@ export function Editor() {
   const [message, setMessage] = useState("");
 
   const active = useMemo(() => activeStyles(text, selection, { accents }), [text, selection, accents]);
+  const activeList = useMemo(() => listKind(text, selection), [text, selection]);
   const used = charactersUsed(text);
   const over = used - POST_LIMIT;
 
@@ -59,44 +69,49 @@ export function Editor() {
     setMessage("");
   }
 
-  function style(which: Style) {
+  /** Runs a pure change on the field's current text and selection. */
+  function edit(change: (text: string, selection: { start: number; end: number }) => Change, noEffect: string) {
     const field = area.current;
     if (!field) return;
-    apply(toggle(field.value, currentSelection(field), which, { accents }), NOTHING_TO_FORMAT);
+    apply(change(field.value, currentSelection(field)), noEffect);
   }
 
-  function clear() {
-    const field = area.current;
-    if (!field) return;
-    apply(clearFormat(field.value, currentSelection(field)), "No formatting to remove there.");
+  /** Puts text where the caret is, replacing whatever is selected, and leaves the caret after it. */
+  function insert(inserted: string) {
+    edit((value, { start, end }) => {
+      const caret = start + inserted.length;
+      return { text: value.slice(0, start) + inserted + value.slice(end), selection: { start: caret, end: caret }, changed: true };
+    }, "");
   }
 
   /** Replaces the whole text and leaves the caret at the end. */
   function replaceAll(next: string, noEffect: string) {
-    const field = area.current;
-    if (!field) return;
-    const atEnd = { start: next.length, end: next.length };
-    apply({ text: next, selection: atEnd, changed: next !== field.value }, noEffect);
+    edit((value) => ({ text: next, selection: { start: next.length, end: next.length }, changed: next !== value }), noEffect);
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === "Enter" && !event.shiftKey && !event.metaKey && !event.ctrlKey) {
+      const field = event.currentTarget;
+      if (field.selectionStart !== field.selectionEnd) return;
+      const change = continueList(field.value, field.selectionStart);
+      if (!change) return;
+      event.preventDefault();
+      apply(change, "");
+      return;
+    }
     if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
     const key = event.key.toLowerCase();
     const which = event.shiftKey ? (key === "x" ? "strike" : undefined) : SHORTCUTS[key];
     if (!which) return;
     event.preventDefault();
-    style(which);
+    edit((value, selected) => toggle(value, selected, which, { accents }), t.messages.nothingToFormat);
   }
 
   function onPaste(event: ClipboardEvent<HTMLTextAreaElement>) {
     const pasted = event.clipboardData.getData("text/plain");
     if (!convertOnPaste || pasted === "") return;
     event.preventDefault();
-    const field = event.currentTarget;
-    const converted = markdownToUnicode(pasted, { accents });
-    const caret = field.selectionStart + converted.length;
-    const next = field.value.slice(0, field.selectionStart) + converted + field.value.slice(field.selectionEnd);
-    apply({ text: next, selection: { start: caret, end: caret }, changed: true }, "");
+    insert(markdownToUnicode(pasted, { accents }));
   }
 
   function onSelect(event: SyntheticEvent<HTMLTextAreaElement>) {
@@ -106,58 +121,73 @@ export function Editor() {
   async function copy() {
     try {
       await navigator.clipboard.writeText(text);
-      setMessage("Copied. Paste it into LinkedIn.");
+      setMessage(t.messages.copied);
     } catch {
       // Without clipboard permission the manual path remains: everything selected and one shortcut away.
       area.current?.focus();
       area.current?.select();
-      setMessage("Could not copy automatically. The text is selected: copy it with Ctrl/⌘ + C.");
+      setMessage(t.messages.copyFailed);
     }
   }
 
   return (
     <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(300px,400px)]">
-      <section
-        aria-label="Editor"
-        className={`${card} flex min-h-0 flex-col shadow-sm focus-within:ring-2 focus-within:ring-focus`}
-      >
+      <section aria-label={t.post} className={`${card} flex min-h-0 flex-col shadow-sm focus-within:ring-2 focus-within:ring-focus`}>
         <div
           role="toolbar"
-          aria-label="Text format"
+          aria-label={t.toolbar}
           aria-controls="post"
-          className="sticky top-0 z-10 flex flex-wrap gap-2 rounded-t-lg border-b border-border bg-surface p-2 pt-[max(0.5rem,env(safe-area-inset-top))] lg:static"
+          className="sticky top-0 z-10 flex flex-wrap items-center gap-2 rounded-t-lg border-b border-border bg-surface p-2 pt-[max(0.5rem,env(safe-area-inset-top))] lg:static"
         >
-          {BUTTONS.map(({ style: which, name, className, shortcut, keys }) => (
+          {STYLE_BUTTONS.map(({ style, className, shortcut, keys }) => (
             <button
-              key={which}
+              key={style}
               type="button"
               className={formatButton}
-              aria-pressed={active[which]}
+              aria-pressed={active[style]}
               aria-keyshortcuts={keys}
-              title={shortcut ? `${name} (${shortcut})` : name}
-              // Keep the focus in the text so the selection stays visible.
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => style(which)}
+              title={shortcut ? t.shortcutHint(t.styles[style], shortcut) : t.styles[style]}
+              onMouseDown={keepFocus}
+              onClick={() => edit((value, selected) => toggle(value, selected, style, { accents }), t.messages.nothingToFormat)}
             >
-              <span className={className}>{name}</span>
+              <span className={className}>{t.styles[style]}</span>
             </button>
           ))}
-          <button type="button" className={button} onMouseDown={(event) => event.preventDefault()} onClick={clear}>
-            Clear format
+          <span className="mx-1 h-6 w-px bg-border" aria-hidden="true" />
+          {LIST_BUTTONS.map(({ kind, glyph }) => (
+            <button
+              key={kind}
+              type="button"
+              className={formatButton}
+              aria-pressed={activeList === kind}
+              aria-label={t.lists[kind]}
+              title={t.lists[kind]}
+              onMouseDown={keepFocus}
+              onClick={() => edit((value, selected) => toggleList(value, selected, kind), t.messages.noList)}
+            >
+              <span aria-hidden="true">
+                <span className="font-semibold">{glyph}</span> {t.listShort}
+              </span>
+            </button>
+          ))}
+          <EmojiPicker onPick={insert} />
+          <span className="mx-1 h-6 w-px bg-border" aria-hidden="true" />
+          <button type="button" className={button} onMouseDown={keepFocus} onClick={() => edit(clearFormat, t.messages.nothingToClear)}>
+            {t.clearFormat}
           </button>
           <button
             type="button"
             className={`${button} sm:ml-auto`}
-            title="Convert the Markdown in the whole text: **bold**, *italic*, ~~strike~~, `code`, headings and bullets"
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => replaceAll(markdownToUnicode(text, { accents }), "No Markdown to convert in the text.")}
+            title={t.convertMarkdownHint}
+            onMouseDown={keepFocus}
+            onClick={() => replaceAll(markdownToUnicode(text, { accents }), t.messages.noMarkdown)}
           >
-            Convert Markdown
+            {t.convertMarkdown}
           </button>
         </div>
 
         <label htmlFor="post" className="sr-only">
-          Your post
+          {t.post}
         </label>
         <textarea
           id="post"
@@ -170,17 +200,17 @@ export function Editor() {
           onSelect={onSelect}
           onKeyDown={onKeyDown}
           onPaste={onPaste}
-          placeholder="Paste your post here, Markdown included. Then double-click a word and press Bold."
+          placeholder={t.placeholder}
           spellCheck
-          rows={12}
+          rows={10}
           aria-describedby="counter"
           className="block min-h-[40dvh] w-full flex-1 resize-none bg-field px-4 py-3 text-base leading-relaxed text-text outline-none placeholder:text-muted lg:min-h-0"
         />
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-b-lg border-t border-border p-2 pl-4">
           <p id="counter" className={`text-sm ${over > 0 ? "font-semibold text-danger" : muted}`}>
-            {used} / {POST_LIMIT} characters
-            {over > 0 && ` · ${over} over: LinkedIn will not publish it`}
+            {t.counter(used, POST_LIMIT)}
+            {over > 0 && ` · ${t.over(over)}`}
           </p>
           <div className="ml-auto flex gap-2">
             <button
@@ -189,13 +219,13 @@ export function Editor() {
               disabled={text === ""}
               onClick={() => {
                 replaceAll("", "");
-                setMessage("Text cleared. If that was a mistake, undo it with Ctrl/⌘ + Z.");
+                setMessage(t.messages.cleared);
               }}
             >
-              Clear
+              {t.clear}
             </button>
             <button type="button" className={primaryButton} disabled={text === ""} onClick={copy}>
-              Copy for LinkedIn
+              {t.copy}
             </button>
           </div>
           <p role="status" className={`w-full text-sm ${message === "" ? "hidden" : ""}`}>
@@ -208,7 +238,7 @@ export function Editor() {
         <Preview text={text} />
 
         <fieldset className={`${card} flex flex-wrap items-center gap-x-4 gap-y-1 px-3 py-2`}>
-          <legend className="sr-only">Options</legend>
+          <legend className="sr-only">{t.options.legend}</legend>
           <label className={checkboxRow}>
             <input
               type="checkbox"
@@ -216,12 +246,9 @@ export function Editor() {
               checked={convertOnPaste}
               onChange={(event) => setConvertOnPaste(event.target.checked)}
             />
-            Convert Markdown on paste
+            {t.options.convertOnPaste}
           </label>
-          <Tooltip about="Convert Markdown on paste">
-            Whatever you paste with <code>**bold**</code>, <code>*italic*</code>, <code>~~strike~~</code>, <code>`code`</code>,
-            headings or bullets comes in already converted. Turn it off to paste text as is.
-          </Tooltip>
+          <Tooltip label={t.options.about(t.options.convertOnPaste)}>{t.options.convertOnPasteHelp}</Tooltip>
           <label className={checkboxRow}>
             <input
               type="checkbox"
@@ -229,12 +256,9 @@ export function Editor() {
               checked={accents}
               onChange={(event) => setAccents(event.target.checked)}
             />
-            Style accented letters
+            {t.options.accents}
           </label>
-          <Tooltip about="Style accented letters">
-            Letters like á, ñ or ü have no bold twin in Unicode, so they are written as the styled letter plus a combining
-            accent. If a device shows the accent out of place, turn this off and those letters stay plain.
-          </Tooltip>
+          <Tooltip label={t.options.about(t.options.accents)}>{t.options.accentsHelp}</Tooltip>
         </fieldset>
 
         <Help />

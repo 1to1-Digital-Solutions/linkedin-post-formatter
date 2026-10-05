@@ -5,18 +5,20 @@ import { useState } from "react";
 import { CUTS, hook, type Device } from "@/lib/format/hook";
 import { charactersUsed } from "@/lib/format/limit";
 
+import { useMessages } from "./i18n/locale";
 import { card, muted } from "./styles";
 
 /** Width of a post's text in the LinkedIn feed and lines it shows before the "…more". */
-const DEVICES: Record<Device, { name: string; width: string; lines: string }> = {
-  desktop: { name: "Desktop", width: "max-w-[555px]", lines: "line-clamp-5" },
-  mobile: { name: "Mobile", width: "max-w-[360px]", lines: "line-clamp-3" },
+const DEVICES: Record<Device, { width: string; lines: string }> = {
+  desktop: { width: "max-w-[555px]", lines: "line-clamp-5" },
+  mobile: { width: "max-w-[360px]", lines: "line-clamp-3" },
 };
 
 const option =
   "flex min-h-11 cursor-pointer items-center rounded-md border border-field-border px-3 text-sm font-medium has-[:checked]:border-accent has-[:checked]:bg-accent-soft has-[:checked]:shadow-[inset_0_-3px_0_var(--accent)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus pointer-fine:min-h-8";
 
 export function Preview({ text }: { text: string }) {
+  const t = useMessages();
   const [device, setDevice] = useState<Device>("desktop");
   const { visible, truncated } = hook(text, device);
   const behind = charactersUsed(text.trim()) - charactersUsed(visible);
@@ -28,10 +30,10 @@ export function Preview({ text }: { text: string }) {
     <section className={`${card} p-3 sm:p-4`} aria-labelledby="preview">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 id="preview" className="text-sm font-semibold">
-          Before the “…more”
+          {t.preview.heading}
         </h2>
         <fieldset className="flex gap-1.5">
-          <legend className="sr-only">Preview device</legend>
+          <legend className="sr-only">{t.preview.device}</legend>
           {(Object.keys(DEVICES) as Device[]).map((value) => (
             <label key={value} className={option}>
               <input
@@ -42,7 +44,7 @@ export function Preview({ text }: { text: string }) {
                 checked={device === value}
                 onChange={() => setDevice(value)}
               />
-              {DEVICES[value].name}
+              {t.preview[value]}
             </label>
           ))}
         </fieldset>
@@ -57,19 +59,19 @@ export function Preview({ text }: { text: string }) {
           </div>
         </div>
         {empty ? (
-          <p className={`text-sm ${muted}`}>The start of your post, as the feed will show it.</p>
+          <p className={`text-sm ${muted}`}>{t.preview.empty}</p>
         ) : (
           <p className={`${look.lines} text-sm leading-5 whitespace-pre-wrap`}>
             {visible}
-            {truncated && <span className={muted}> …more</span>}
+            {truncated && <span className={muted}> {t.preview.more}</span>}
           </p>
         )}
       </div>
 
       <p className={`mt-2 text-xs ${muted}`}>
-        {truncated && `${charactersUsed(visible)} characters show; ${behind} are behind the “…more”. `}
-        {!truncated && !empty && "Shows in full, no “…more”. "}
-        Approximate: LinkedIn cuts at about {cut.characters} characters or {cut.lines} lines, whichever comes first.
+        {truncated && `${t.preview.shows(charactersUsed(visible), behind)} `}
+        {!truncated && !empty && `${t.preview.full} `}
+        {t.preview.approximate(cut.characters, cut.lines)}
       </p>
     </section>
   );
