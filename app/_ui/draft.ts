@@ -1,47 +1,47 @@
 import { useSyncExternalStore } from "react";
 
 /**
- * El borrador, guardado en el `localStorage` de este navegador para que no se pierda al recargar.
- * No sale de aquí: la herramienta no tiene servidor al que enviarlo.
+ * The draft, kept in this browser's `localStorage` so it survives a reload. It goes nowhere
+ * else: the tool has no server to send it to.
  */
 
-const CLAVE = "formato-linkedin:borrador";
+const KEY = "linkedin-formatter:draft";
 
-/** `null` mientras no se ha leído el almacenamiento. */
-let borrador: string | null = null;
-const oyentes = new Set<() => void>();
+/** `null` until storage has been read. */
+let draft: string | null = null;
+const listeners = new Set<() => void>();
 
-function leer(): string {
-  if (borrador === null) {
+function read(): string {
+  if (draft === null) {
     try {
-      borrador = window.localStorage.getItem(CLAVE) ?? "";
+      draft = window.localStorage.getItem(KEY) ?? "";
     } catch {
-      // Con el almacenamiento bloqueado (navegación privada estricta) se trabaja igual, en memoria.
-      console.warn("No se puede guardar el borrador en este navegador: se perderá al cerrar la pestaña.");
-      borrador = "";
+      // With storage blocked (strict private browsing) the tool still works, in memory only.
+      console.warn("The draft cannot be saved in this browser: it will be lost when the tab closes.");
+      draft = "";
     }
   }
-  return borrador;
+  return draft;
 }
 
-function suscribir(avisar: () => void): () => void {
-  oyentes.add(avisar);
+function subscribe(notify: () => void): () => void {
+  listeners.add(notify);
   return () => {
-    oyentes.delete(avisar);
+    listeners.delete(notify);
   };
 }
 
-export function guardarBorrador(texto: string): void {
-  borrador = texto;
+export function saveDraft(text: string): void {
+  draft = text;
   try {
-    window.localStorage.setItem(CLAVE, texto);
+    window.localStorage.setItem(KEY, text);
   } catch {
-    // Mismo caso que al leer, del que ya se avisó: el borrador sigue en memoria.
+    // Same case as when reading, already warned about: the draft stays in memory.
   }
-  for (const avisar of oyentes) avisar();
+  for (const notify of listeners) notify();
 }
 
-/** El borrador actual. En el servidor y durante la hidratación está vacío. */
-export function useBorrador(): string {
-  return useSyncExternalStore(suscribir, leer, () => "");
+/** The current draft. On the server and during hydration it is empty. */
+export function useDraft(): string {
+  return useSyncExternalStore(subscribe, read, () => "");
 }

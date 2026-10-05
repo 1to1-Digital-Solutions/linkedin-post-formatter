@@ -1,50 +1,44 @@
 import { Editor } from "./_ui/editor";
-import { seccion, tenue, tituloSeccion } from "./_ui/estilos";
+import { muted } from "./_ui/styles";
 
-export default function Pagina() {
+const LINKS = [
+  { name: "GitHub", href: "https://github.com/cpl121" },
+  { name: "LinkedIn", href: "https://www.linkedin.com/in/c%C3%A9sar-pe%C3%B3n-lamparero/" },
+  { name: "Source", href: "https://github.com/1to1-Digital-Solutions/formato-linkedin" },
+];
+
+export default function Page() {
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pt-6 pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:pt-10">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Formato para LinkedIn</h1>
-        <p className={`mt-1 ${tenue}`}>
-          Pega tu post, destaca lo que quieras y cópialo tal cual a LinkedIn. El texto no sale de este navegador.
-        </p>
-      </header>
-
-      <Editor />
-
-      <section className={seccion} aria-labelledby="como-se-usa">
-        <h2 id="como-se-usa" className={tituloSeccion}>
-          Cómo se usa
-        </h2>
-        <ul className="list-disc space-y-1.5 pl-5 text-sm">
-          <li>
-            Haz doble clic en una palabra (o selecciona un trozo) y pulsa un botón de formato. Pulsarlo otra vez lo
-            quita.
-          </li>
-          <li>Con el cursor sobre una palabra, sin seleccionar nada, el formato se aplica a esa palabra.</li>
-          <li>
-            Atajos: <kbd>Ctrl/⌘ + B</kbd> negrita, <kbd>Ctrl/⌘ + I</kbd> cursiva, <kbd>Ctrl/⌘ + U</kbd> subrayado,{" "}
-            <kbd>Ctrl/⌘ + Mayús + X</kbd> tachado y <kbd>Ctrl/⌘ + Z</kbd> para deshacer.
-          </li>
-          <li>Los enlaces, #hashtags y @menciones se quedan siempre sin formato, para que sigan funcionando.</li>
-          <li>El borrador se guarda en este navegador: puedes cerrar la pestaña y seguir luego.</li>
-        </ul>
-      </section>
-
-      <section className={seccion} aria-labelledby="antes-de-publicar">
-        <h2 id="antes-de-publicar" className={tituloSeccion}>
-          Antes de publicar
-        </h2>
-        <ul className={`list-disc space-y-1.5 pl-5 text-sm ${tenue}`}>
-          <li>
-            LinkedIn no tiene negrita de verdad: son otros caracteres que se parecen a las letras. Un lector de
-            pantalla los lee mal o se los salta, y el buscador de LinkedIn no encuentra esas palabras.
-          </li>
-          <li>Por eso conviene usarlos solo en unas pocas palabras clave, nunca en párrafos enteros.</li>
-          <li>Cada letra con formato cuenta como dos caracteres para el tope de 3000.</li>
-        </ul>
-      </section>
-    </main>
+    <div className="flex min-h-dvh flex-col lg:h-dvh">
+      <main className="mx-auto flex w-full max-w-6xl min-h-0 flex-1 flex-col gap-3 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-4">
+        <header className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <h1 className="text-xl font-semibold tracking-tight">LinkedIn Post Formatter</h1>
+          <p className={`text-sm ${muted}`}>
+            Paste your post, style what matters and copy it into LinkedIn. Nothing leaves your browser.
+          </p>
+        </header>
+        <Editor />
+      </main>
+      <footer className="border-t border-border">
+        <div
+          className={`mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-2 text-sm ${muted} pb-[max(0.5rem,env(safe-area-inset-bottom))]`}
+        >
+          <p>Made by César Peón · 1to1 Digital Solutions</p>
+          <nav aria-label="Author links" className="flex gap-x-4">
+            {LINKS.map(({ name, href }) => (
+              <a
+                key={name}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-accent pointer-fine:min-h-0"
+              >
+                {name}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </footer>
+    </div>
   );
 }

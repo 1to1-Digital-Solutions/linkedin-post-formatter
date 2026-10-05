@@ -3,12 +3,12 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Formato para LinkedIn · 1to1 Digital Solutions",
-  description: "Negrita, cursiva y tachado para un post de LinkedIn, desde Markdown o a mano.",
-  robots: { index: false, follow: false, nocache: true },
+  title: "LinkedIn Post Formatter",
+  description:
+    "Bold, italic, strikethrough and more for LinkedIn posts, from Markdown or by hand. Runs entirely in your browser.",
 };
 
-/** `viewport-fit=cover` para que el iPhone pinte bajo la muesca; los márgenes los pone `safe-area`. */
+/** `viewport-fit=cover` so iPhones paint under the notch; the margins come from `safe-area`. */
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -21,8 +21,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es">
-      <body className="min-h-dvh bg-fondo text-texto antialiased">{children}</body>
+    <html lang="en">
+      <body className="min-h-dvh bg-background text-text antialiased">{children}</body>
     </html>
   );
 }

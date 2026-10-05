@@ -1,29 +1,24 @@
 /**
- * Las clases de los elementos que se repiten, en un solo sitio para que se vean igual. Solo usan
- * los tokens de color de `app/globals.css`.
+ * The classes of the elements that repeat, in one place so they look the same. They only use the
+ * colour tokens from `app/globals.css`.
  *
- * Los objetivos táctiles miden 44 px con el dedo (móvil y tableta) y algo menos con ratón
- * (`pointer-fine`), sea cual sea el ancho.
+ * Touch targets are 44 px with a finger (phone and tablet) and a bit less with a mouse
+ * (`pointer-fine`), whatever the width.
  */
 
-const botonBase =
+const buttonBase =
   "inline-flex min-h-11 items-center justify-center gap-1 rounded-md px-3.5 text-sm font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50 pointer-fine:min-h-9";
 
-export const boton = `${botonBase} border border-borde-campo bg-superficie text-texto hover:border-acento hover:bg-elevada`;
+export const button = `${buttonBase} border border-field-border bg-surface text-text hover:border-accent hover:bg-raised`;
 
-export const botonPrimario = `${botonBase} bg-primario font-semibold text-sobre-primario hover:bg-primario-hover`;
+export const primaryButton = `${buttonBase} bg-primary font-semibold text-on-primary hover:bg-primary-hover`;
 
-/**
- * Un botón de la barra de formato. Pulsado (`aria-pressed`) no cambia solo de color: lleva
- * además una barra por debajo.
- */
-export const botonDeFormato = `${boton} aria-pressed:border-acento aria-pressed:bg-acento-suave aria-pressed:shadow-[inset_0_-3px_0_var(--acento)]`;
+/** A format toolbar button. Pressed (`aria-pressed`) it does not just change colour: it also gets a bar underneath. */
+export const formatButton = `${button} aria-pressed:border-accent aria-pressed:bg-accent-soft aria-pressed:shadow-[inset_0_-3px_0_var(--accent)]`;
 
-export const seccion = "rounded-lg border border-borde bg-superficie p-4 sm:p-5";
+export const card = "rounded-lg border border-border bg-surface";
 
-export const tituloSeccion = "mb-3 text-base font-semibold";
+export const muted = "text-muted";
 
-export const tenue = "text-tenue";
-
-/** Una casilla con su texto: toda la fila es el objetivo táctil. */
-export const casilla = "flex min-h-11 cursor-pointer items-start gap-3 py-2 text-sm pointer-fine:min-h-0 pointer-fine:py-1";
+/** A checkbox with its text: the whole row is the touch target. */
+export const checkboxRow = "flex min-h-11 cursor-pointer items-center gap-2 text-sm pointer-fine:min-h-0";

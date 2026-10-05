@@ -1,94 +1,81 @@
 @import "tailwindcss";
 
 /*
- * Los colores, como tokens: los de la marca de 1to1 (antracita y el verde #1f957a con su escala),
- * los mismos que usa el CRM. Los componentes usan solo estos nombres (`bg-superficie`,
- * `text-acento`…), nunca un hex suelto ni la paleta de Tailwind: cambiar un tono es cambiarlo
- * aquí, en claro y en oscuro.
+ * Colours as tokens: anthracite and the 1to1 Digital Solutions green (#1f957a) with its scale.
+ * Components only use these names (`bg-surface`, `text-accent`…), never a loose hex or the
+ * Tailwind palette: changing a shade means changing it here, in light and in dark.
  *
- * Jerarquía de superficies: `hundido` < `fondo` (la página) < `superficie` (tarjetas) <
- * `elevada` (hover, lo activo). `campo` es el fondo de los controles.
+ * Surface hierarchy: `sunken` < `background` (the page) < `surface` (cards) < `raised` (hover,
+ * what is active). `field` is the background of controls.
  *
- * `primario` es el fondo de los botones principales; `acento` es el verde para texto, un tono
- * más claro en oscuro porque #1f957a no llega a 4,5:1 sobre antracita.
+ * `primary` is the background of the main buttons; `accent` is the green for text, one shade
+ * lighter in dark mode because #1f957a does not reach 4.5:1 on anthracite.
  */
 :root {
   color-scheme: light;
-  --fondo: #f4f4f5;
-  --hundido: #e9e9ec;
-  --superficie: #ffffff;
-  --elevada: #f0f0f2;
-  --borde: #dcdce0;
-  --borde-campo: #8a8a93;
-  --campo: #ffffff;
-  --texto: #1c1c1f;
-  --tenue: #52525b;
-  --primario: #188169;
-  --primario-hover: #116e57;
-  --sobre-primario: #ffffff;
-  --acento: #116e57;
-  --acento-suave: #d5f2ea;
-  --peligro: #b91c1c;
-  --peligro-fondo: #b91c1c;
-  --peligro-hover: #991b1b;
-  --sobre-peligro: #ffffff;
-  --aviso: #92400e;
-  --foco: #116e57;
+  --background: #f4f4f5;
+  --sunken: #e9e9ec;
+  --surface: #ffffff;
+  --raised: #f0f0f2;
+  --border: #dcdce0;
+  --field-border: #8a8a93;
+  --field: #ffffff;
+  --text: #1c1c1f;
+  --muted: #52525b;
+  --primary: #188169;
+  --primary-hover: #116e57;
+  --on-primary: #ffffff;
+  --accent: #116e57;
+  --accent-soft: #d5f2ea;
+  --danger: #b91c1c;
+  --focus: #116e57;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --fondo: #27272a;
-    --hundido: #1e1e21;
-    --superficie: #313135;
-    --elevada: #3b3b40;
-    --borde: #44444a;
-    --borde-campo: #7a7a83;
-    --campo: #1e1e21;
-    --texto: #ededed;
-    --tenue: #b0b0b8;
-    --primario: #1f957a;
-    --primario-hover: #1ac89a;
-    --sobre-primario: #1c1c1f;
-    --acento: #1ac89a;
-    --acento-suave: #1d3b35;
-    --peligro: #fa8a8a;
-    --peligro-fondo: #b91c1c;
-    --peligro-hover: #dc2626;
-    --sobre-peligro: #ffffff;
-    --aviso: #fbbf24;
-    --foco: #14ffbc;
+    --background: #27272a;
+    --sunken: #1e1e21;
+    --surface: #313135;
+    --raised: #3b3b40;
+    --border: #44444a;
+    --field-border: #7a7a83;
+    --field: #1e1e21;
+    --text: #ededed;
+    --muted: #b0b0b8;
+    --primary: #1f957a;
+    --primary-hover: #1ac89a;
+    --on-primary: #1c1c1f;
+    --accent: #1ac89a;
+    --accent-soft: #1d3b35;
+    --danger: #fa8a8a;
+    --focus: #14ffbc;
   }
 }
 
 @theme inline {
-  --color-fondo: var(--fondo);
-  --color-hundido: var(--hundido);
-  --color-superficie: var(--superficie);
-  --color-elevada: var(--elevada);
-  --color-borde: var(--borde);
-  --color-borde-campo: var(--borde-campo);
-  --color-campo: var(--campo);
-  --color-texto: var(--texto);
-  --color-tenue: var(--tenue);
-  --color-primario: var(--primario);
-  --color-primario-hover: var(--primario-hover);
-  --color-sobre-primario: var(--sobre-primario);
-  --color-acento: var(--acento);
-  --color-acento-suave: var(--acento-suave);
-  --color-peligro: var(--peligro);
-  --color-peligro-fondo: var(--peligro-fondo);
-  --color-peligro-hover: var(--peligro-hover);
-  --color-sobre-peligro: var(--sobre-peligro);
-  --color-aviso: var(--aviso);
-  --color-foco: var(--foco);
+  --color-background: var(--background);
+  --color-sunken: var(--sunken);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-border: var(--border);
+  --color-field-border: var(--field-border);
+  --color-field: var(--field);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-focus: var(--focus);
 }
 
 html,
 body {
-  background-color: var(--fondo);
-  color: var(--texto);
+  background-color: var(--background);
+  color: var(--text);
 }
 
 body {
@@ -96,15 +83,20 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
-/* El foco siempre se ve, con el teclado, en claro y en oscuro. */
+/* Focus is always visible, with the keyboard, in light and in dark. */
 :focus-visible {
-  outline: 2px solid var(--foco);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
+/* The editor's focus ring goes around the whole card (`focus-within`), not around the field. */
+textarea:focus-visible {
+  outline: none;
+}
+
 ::selection {
-  background-color: var(--primario);
-  color: var(--sobre-primario);
+  background-color: var(--primary);
+  color: var(--on-primary);
 }
 
 @media (prefers-reduced-motion: reduce) {
