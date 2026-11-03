@@ -7,6 +7,9 @@ import { LOCALES, setLocale, useLocale, useMessages, type Locale } from "./i18n/
 import { muted } from "./styles";
 import { setTheme, useTheme } from "./theme";
 
+/** The company behind the tool: the credit links to its site so every app points at the same place. */
+const COMPANY_URL = "https://1to1digital.solutions/";
+
 const LINKS = [
   { name: "GitHub", href: "https://github.com/cpl121" },
   { name: "LinkedIn", href: "https://www.linkedin.com/in/c%C3%A9sar-pe%C3%B3n-lamparero/" },
@@ -71,7 +74,17 @@ export function App() {
         <div
           className={`mx-auto flex max-w-6xl flex-col items-center gap-x-6 gap-y-2 px-4 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-center text-sm sm:flex-row sm:justify-between sm:px-6 sm:pt-5 sm:pb-[max(1.25rem,env(safe-area-inset-bottom))] ${muted}`}
         >
-          <p>{t.footer.madeBy}</p>
+          <p>
+            {t.footer.madeBy} ·{" "}
+            <a
+              href={COMPANY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline-offset-4 hover:text-accent hover:underline"
+            >
+              {t.footer.company}
+            </a>
+          </p>
           <nav aria-label={t.footer.links} className="flex gap-x-5">
             {LINKS.map(({ name, href }) => (
               <a

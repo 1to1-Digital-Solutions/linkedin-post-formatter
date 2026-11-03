@@ -87,7 +87,7 @@ export const en = {
     ],
   },
 
-  footer: { madeBy: "Made by César Peón · 1to1 Digital Solutions", links: "Author links", source: "Source" },
+  footer: { madeBy: "Made by César Peón", company: "1to1 Digital Solutions", links: "Author links", source: "Source" },
 };
 
 export type Messages = typeof en;

@@ -85,5 +85,5 @@ export const es: Messages = {
     ],
   },
 
-  footer: { madeBy: "Hecho por César Peón · 1to1 Digital Solutions", links: "Enlaces del autor", source: "Código fuente" },
+  footer: { madeBy: "Hecho por César Peón", company: "1to1 Digital Solutions", links: "Enlaces del autor", source: "Código fuente" },
 };
